@@ -1,21 +1,19 @@
 import { Res, Result } from '../../shared/Result';
 import { BusinessException } from '../exceptions/Business.exception';
-import AbstractEntity, { EntityProps } from './AbstractEntity';
+import AbstractMedia, { MediaProps } from './AbstractMedia';
 
-export interface ImageProps extends EntityProps {
+export interface ImageProps extends MediaProps {
   altText: string;
 }
 
-export default class Image extends AbstractEntity {
+export default class Image
+  extends AbstractMedia<ImageProps>
+  implements ImageProps
+{
   #altText: string;
 
   static create(props: ImageProps): Result<BusinessException, Image> {
-    const image = new Image();
-
-    image.setUrl(props.url);
-    image.setAltText(props.altText);
-    image.setTitle(props.title);
-    image.setDescription(props.description);
+    const image = new Image(props);
 
     return Res.success(image);
   }

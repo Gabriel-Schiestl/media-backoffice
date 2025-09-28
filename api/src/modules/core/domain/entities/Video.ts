@@ -1,21 +1,19 @@
 import { Res, Result } from '../../shared/Result';
 import { BusinessException } from '../exceptions/Business.exception';
-import AbstractEntity, { EntityProps } from './AbstractEntity';
+import AbstractMedia, { MediaProps } from './AbstractMedia';
 
-export interface VideoProps extends EntityProps {
+export interface VideoProps extends MediaProps {
   duration: number;
 }
 
-export default class Video extends AbstractEntity {
+export default class Video
+  extends AbstractMedia<VideoProps>
+  implements VideoProps
+{
   #duration: number;
 
   static create(props: VideoProps): Result<BusinessException, Video> {
-    const video = new Video();
-
-    video.setUrl(props.url);
-    video.setDuration(props.duration);
-    video.setTitle(props.title);
-    video.setDescription(props.description);
+    const video = new Video(props);
 
     return Res.success(video);
   }
