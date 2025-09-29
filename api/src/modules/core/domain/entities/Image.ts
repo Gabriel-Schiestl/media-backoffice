@@ -13,7 +13,14 @@ export default class Image
   #altText: string;
 
   static create(props: ImageProps): Result<BusinessException, Image> {
+    const valid = this.isValid(props);
+    if (valid.isFailure()) {
+      return Res.failure(valid.error);
+    }
+
     const image = new Image(props);
+
+    image.setAltText(props.altText);
 
     return Res.success(image);
   }
