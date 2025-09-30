@@ -6,26 +6,40 @@ import Video from './Video';
 export type Media = Video | Image;
 
 export interface UploadProps {
+  id: string;
   media: Media;
   uploadDate: Date;
   uploadedBy: string;
 }
 
+export interface CreateUploadProps {
+  media: Media;
+  uploadedBy: string;
+}
+
 export default class Upload implements UploadProps {
+  #id: string;
   #media: Media;
   #uploadDate: Date;
   #uploadedBy: string;
 
-  static Create(props: UploadProps): Result<BusinessException, Upload> {
+  static Create(props: CreateUploadProps): Result<BusinessException, Upload> {
     const upload = new Upload();
 
-    const isValid = this.isValid(props);
+    const id = crypto.randomUUID();
+
+    const isValid = this.isValid({
+      id,
+      ...props,
+      uploadDate: new Date(),
+    });
     if (isValid.isFailure()) {
       return Res.failure(isValid.error);
     }
 
+    upload.#id = id;
     upload.setMedia(props.media);
-    upload.setUploadDate(props.uploadDate);
+    upload.setUploadDate(new Date());
     upload.setUploadedBy(props.uploadedBy);
 
     return Res.success(upload);
@@ -55,6 +69,10 @@ export default class Upload implements UploadProps {
 
   private setUploadedBy(uploadedBy: string) {
     this.#uploadedBy = uploadedBy;
+  }
+
+  get id(): string {
+    return this.#id;
   }
 
   get media(): Media {

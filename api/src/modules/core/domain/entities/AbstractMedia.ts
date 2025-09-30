@@ -2,7 +2,7 @@ import AbstractEvent from '../events/AbstractEvent';
 import Url from './Url';
 
 export interface MediaProps {
-  url: Url[];
+  urls: Url[];
   title: string;
   size: number;
   format: string;
@@ -12,7 +12,7 @@ export interface MediaProps {
 
 export default abstract class AbstractMedia<T extends MediaProps> {
   readonly #id: string;
-  #url: Url[];
+  #urls: Url[];
   #title: string;
   #size: number;
   #format: string;
@@ -22,7 +22,7 @@ export default abstract class AbstractMedia<T extends MediaProps> {
 
   protected constructor(props: T, id?: string) {
     this.#id = id ?? crypto.randomUUID();
-    this.setUrl(props.url);
+    this.setUrls(props.urls);
     this.setTitle(props.title);
     this.setSize(props.size);
     this.setFormat(props.format);
@@ -34,8 +34,8 @@ export default abstract class AbstractMedia<T extends MediaProps> {
     return this.#id;
   }
 
-  get url(): Url[] {
-    return this.#url;
+  get urls(): Url[] {
+    return this.#urls;
   }
 
   get title(): string {
@@ -58,8 +58,8 @@ export default abstract class AbstractMedia<T extends MediaProps> {
     return this.#description;
   }
 
-  protected setUrl(url: Url[]) {
-    this.#url = url;
+  protected setUrls(urls: Url[]) {
+    this.#urls = urls;
   }
 
   protected setTitle(title: string) {
@@ -85,6 +85,8 @@ export default abstract class AbstractMedia<T extends MediaProps> {
   protected addEvent(event: AbstractEvent<MediaProps>) {
     this.#events.push(event);
   }
+
+  abstract applyUrls(urls: Url[]): void;
 
   get pullEvents(): AbstractEvent<MediaProps>[] {
     const events = this.#events.slice();
